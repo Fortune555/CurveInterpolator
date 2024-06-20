@@ -314,8 +314,151 @@ public class BondCurveInterpolation {
 - The `getRate` method assumes the date for which the rate is being calculated is between the first and last date in the CSV file.
 - Linear interpolation is used to calculate the rate between two known points.
 - If the specified date is beyond the range of the CSV file, the last available rate is returned.
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------
+# BondCurveInterpolationTest
 
-### Conclusion
+## Overview
+
+`BondCurveInterpolationTest` is a JUnit test class for testing the `BondCurveInterpolation` class. This class reads bond curve data from a CSV file and provides methods to interpolate and retrieve rates based on a specified date and rate type.
+
+## Prerequisites
+
+- Java Development Kit (JDK) installed
+- Maven or Gradle for dependency management (optional but recommended)
+- JUnit 4.x for testing
+- Tablesaw library for data manipulation
+
+## Setup
+
+1. **Clone the repository**:
+    ```sh
+    git clone <repository-url>
+    cd <repository-directory>
+    ```
+
+2. **Add dependencies**: Ensure that the following dependencies are added to your `pom.xml` (for Maven) or `build.gradle` (for Gradle) file.
+
+    **Maven**:
+    ```xml
+    <dependencies>
+        <!-- JUnit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <!-- Tablesaw -->
+        <dependency>
+            <groupId>tech.tablesaw</groupId>
+            <artifactId>tablesaw-core</artifactId>
+            <version>0.38.3</version>
+        </dependency>
+    </dependencies>
+    ```
+
+    **Gradle**:
+    ```groovy
+    dependencies {
+        // JUnit
+        testImplementation 'junit:junit:4.13.2'
+        
+        // Tablesaw
+        implementation 'tech.tablesaw:tablesaw-core:0.38.3'
+    }
+    ```
+
+3. **Prepare the test data**: Ensure that the `testfile.csv` is placed in the correct directory. The file path should match the one specified in the `BondCurveInterpolationTest` class:
+    ```sh
+    <project-root>/testfile.csv
+    ```
+
+## Running the Tests
+
+### Using an IDE
+
+1. **Open the project** in your preferred IDE (e.g., IntelliJ IDEA, Eclipse).
+2. **Navigate to the test class**: `BondCurveInterpolationTest`.
+3. **Run the test class** using the IDE's built-in test runner.
+
+### Using Command Line
+
+1. **Navigate to the project directory**:
+    ```sh
+    cd <project-directory>
+    ```
+
+2. **Run the tests**:
+    - If using Maven:
+      ```sh
+      mvn test
+      ```
+
+    - If using Gradle:
+      ```sh
+      gradle test
+      ```
+
+## Test Cases
+
+The `BondCurveInterpolationTest` class includes the following test cases:
+
+1. **testGetData**: Verifies that the `getData` method correctly loads the table from the CSV file and that the row count matches the expected value.
+    ```java
+    @Test
+    public void testGetData() {
+        BondCurveInterpolation bondCurveInterpolation = new BondCurveInterpolation("2024-06-10", "Bid", path);
+        Table table = bondCurveInterpolation.getData();
+        assertNotNull(table);
+        assertEquals(9, table.rowCount());
+    }
+    ```
+
+2. **testGetRateWithinRange**: Tests if the `getRate` method correctly interpolates the rate for a date within the range of the CSV data.
+    ```java
+    @Test
+    public void testGetRateWithinRange() {
+        bondCurveInterpolation = new BondCurveInterpolation("2024-06-10", "Bid", path);
+        double rate = bondCurveInterpolation.getRate();
+        assertEquals(0.0463, rate, 0.001);
+    }
+    ```
+
+3. **testGetRateAboveRange**: Tests if the `getRate` method correctly returns the last rate for a date above the range of the CSV data.
+    ```java
+    @Test
+    public void testGetRateAboveRange() {
+        bondCurveInterpolation = new BondCurveInterpolation("2027-06-01", "Bid", path);
+        double rate = bondCurveInterpolation.getRate();
+        assertEquals(0.113, rate, 0.001);
+    }
+    ```
+
+4. **testGetRateBelowRange**: Tests if the `getRate` method returns zero for a date below the range of the CSV data.
+    ```java
+    @Test
+    public void testGetRateBelowRange() {
+        bondCurveInterpolation = new BondCurveInterpolation("2022-01-01", "Bid", path);
+        double rate = bondCurveInterpolation.getRate();
+        assertEquals(0, rate, 0.01);
+    }
+    ```
+
+5. **testGetRateWithDifferentRateType**: Tests if the `getRate` method correctly interpolates the rate for a different rate type within the range of the CSV data.
+    ```java
+    @Test
+    public void testGetRateWithDifferentRateType() {
+        bondCurveInterpolation = new BondCurveInterpolation("2025-02-01", "Ask", path);
+        double rate = bondCurveInterpolation.getRate();
+        assertEquals(0.0712, rate, 0.001);
+    }
+    ```
+
+## Conclusion
+
+This `BondCurveInterpolationTest` class helps ensure the correctness of the `BondCurveInterpolation` methods by verifying the data loading and rate interpolation functionalities. Make sure the CSV file path is correct and that the necessary dependencies are included in your project to run the tests successfully.
+
 
 This README provides a basic understanding of how to use the `BondCurveInterpolation` class to perform linear interpolation on bond curve data stored in a CSV file using Tablesaw. Make sure your CSV file is correctly formatted and that you have included the necessary Maven dependencies.
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
