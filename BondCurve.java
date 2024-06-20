@@ -6,6 +6,8 @@ import tech.tablesaw.api.DoubleColumn;
 import tech.tablesaw.api.IntColumn;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.Scanner;
@@ -24,16 +26,13 @@ public class BondCurve {
 		String rateType = input.nextLine(); 
 		
 		System.out.println("Enter full path of the csv file: ");  		
-		//String path = input.nextLine();
-		String path = "/home/fortune/eclipse-workspace/tablesaw-core/src/bondcurve.csv";
+		String path = input.nextLine();
 		
 		BondCurveInterpolation interpolation = new BondCurveInterpolation( date,rateType, path);
 		
-		System.out.println("The "+rateType + " rate for " + date + " is: "+ interpolation.getRate());
+		System.out.println("The "+rateType + " rate for " + date + " is: "+ String.format("%.3f",interpolation.getRate()*100) + "%");
 		
-		
-        
-        
+		        
     }
     
 	
